@@ -153,6 +153,17 @@ def test_chromium_that_does_not_start_gets_a_hint(chromium, capsys):
     assert 'system libraries' in out
 
 
+def test_only_the_first_matching_hint_is_added(chromium, capsys):
+    # A URL without a scheme is the likelier cause, so that hint wins.
+    chromium.launch_error = BrowserError('Browser closed unexpectedly:\n')
+
+    assert pyppesnap.get_image_snapshot_by_url('example.com') is None
+    out = capsys.readouterr().out
+    assert out.count(' (') == 1
+    assert '(the URL needs a scheme, e.g. https://example.com)' in out
+    assert 'system libraries' not in out
+
+
 def test_old_coroutine_still_prints_and_returns_none(chromium, capsys):
     chromium.browser.page.goto_error = Exception('boom')
 

@@ -8,7 +8,7 @@ loop is already running (Jupyter, async web frameworks).
 import asyncio
 import base64
 from concurrent.futures import ThreadPoolExecutor
-from typing import Any, Awaitable, Callable, Dict, Optional
+from typing import Any, Awaitable, Callable, Dict, Optional, Tuple
 
 from pyppeteer import launch
 from pyppeteer.browser import Browser
@@ -143,6 +143,19 @@ def _run_snapshot(url: str, capture: Capture, width: int, height: int, is_mobile
     )
 
 
+#: The README section on Chromium's system libraries.
+_INSTALL_HELP_URL = 'https://github.com/NatLee/pyppeteer-snap#installation'
+#: What to tell the user for failures with a known cause: (does it apply to
+#: this URL and error?, the hint). The first hint that applies is shown, so
+#: the likelier cause goes first. A new known cause is a new row.
+_HINTS: Tuple[Tuple[Callable[[str, BaseException], bool], str], ...] = (
+    (lambda url, error: '://' not in url,
+     'the URL needs a scheme, e.g. https://{url}'),
+    (lambda url, error: isinstance(error, BrowserError),
+     'Chromium did not start. On Linux it may need extra system libraries, see ' + _INSTALL_HELP_URL),
+)
+
+
 def describe_error(url: str, error: BaseException) -> str:
     """Explain in one line why the snapshot of ``url`` failed."""
     reason = str(error).strip()
@@ -152,11 +165,9 @@ def describe_error(url: str, error: BaseException) -> str:
         else:
             reason = type(error).__name__
     message = 'Could not take a snapshot of {}: {}'.format(url, reason)
-    if '://' not in url:
-        message += ' (the URL needs a scheme, e.g. https://{})'.format(url)
-    elif isinstance(error, BrowserError):
-        message += (' (Chromium did not start. On Linux it may need extra system libraries,'
-                    ' see https://github.com/NatLee/pyppeteer-snap#installation)')
+    for applies, hint in _HINTS:
+        if applies(url, error):
+            return '{} ({})'.format(message, hint.format(url=url))
     return message
 
 
