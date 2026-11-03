@@ -1,6 +1,6 @@
 include pyproject.toml
 include *.md
 include LICENSE
-recursive-include tests test*.py
+recursive-include tests *.py
 recursive-include example *.html
 recursive-include example *.py
