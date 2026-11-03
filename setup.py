@@ -18,10 +18,11 @@ RELEASE_TAG = 'v' + VERSION
 # A link target that is relative to the repository: no scheme ("https:", "mailto:"),
 # no in-page anchor and no site-absolute path.
 _RELATIVE = r'(?![A-Za-z][A-Za-z0-9+.-]*:|[#/])'
-# Embedded files (HTML src/srcset, Markdown images) need the raw file ...
+# Embedded files (HTML src/srcset, Markdown images) need the raw file. They are rewritten
+# first, so every relative target that is left after "](" or href=" is a link ...
 _EMBEDDED = re.compile(r'(\b(?:src|srcset)="|!\[[^\]]*\]\()' + _RELATIVE)
-# ... links (HTML href, Markdown links) the GitHub page of the file or folder.
-_LINKED = re.compile(r'(\bhref="|(?<!!)\[[^\]]*\]\()' + _RELATIVE)
+# ... to the GitHub page of the file or folder, including a link around an image: [![x](…)](LICENSE).
+_LINKED = re.compile(r'(\bhref="|\]\()' + _RELATIVE)
 
 
 def absolute_links(markdown: str, ref: str) -> str:

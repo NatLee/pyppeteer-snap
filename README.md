@@ -1,3 +1,7 @@
+> **Looking for a maintained engine?** [playwright-snap](https://github.com/NatLee/playwright-snap) is the
+> Playwright-based successor to PyppeSnap, being built now. PyppeSnap keeps working, but it runs on
+> Pyppeteer, which is no longer maintained: see [Maintenance status](#maintenance-status).
+
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/images/hero-dark.png">
@@ -17,6 +21,27 @@ browser window, or a PDF of the whole page. It opens the page in a headless Chro
 [Pyppeteer](https://github.com/pyppeteer/pyppeteer), so JavaScript-heavy pages render like they do in a
 real browser. One function call, nothing written to disk: handy when the snapshot goes into JSON, a
 database, an email or an `<img src="data:…">`.
+
+## Maintenance status
+
+PyppeSnap drives Chromium through [Pyppeteer](https://github.com/pyppeteer/pyppeteer), and Pyppeteer is no
+longer maintained. Its last release, 2.0.0, came out in February 2024, and its own README now says the
+project is unmaintained and suggests Playwright instead. PyppeSnap stays on Pyppeteer, so here is what that
+means for you:
+
+- **The browser is old and stays old.** Pyppeteer downloads its own Chromium and never updates it:
+  Chromium 117 (from 2023) with Pyppeteer 2.0.0, and Chromium 71 (from 2018) on Python 3.7, where pip can
+  only install Pyppeteer 1.0.2. That Chromium misses years of security fixes, so only take snapshots of
+  pages you trust, and don't put the [web app example](#use-it-in-a-web-app) on the internet.
+- **New web features may not render** the way a current browser shows them.
+- **Its dependencies are capped at old versions** (websockets below 11, urllib3 below 2). Installing
+  PyppeSnap can downgrade them, or clash with other packages in the same environment that need newer ones.
+  A separate virtual environment avoids that.
+- **Nobody fixes Pyppeteer any more.** If a new Python release breaks it, PyppeSnap may not be able to fix
+  that. CI takes real snapshots on Python 3.7 to 3.14 on every change, so a break shows up there first.
+
+For new projects, have a look at [playwright-snap](https://github.com/NatLee/playwright-snap), which uses
+Playwright, a browser library that is still maintained.
 
 ## Installation
 
