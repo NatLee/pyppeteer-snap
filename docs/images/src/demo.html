@@ -1,0 +1,65 @@
+<!doctype html>
+<!--
+  README demo image: frames the real snapshots in out/ made by take_demo_snapshots.py.
+  Render the light and dark versions (#dark picks the dark theme) with e.g.
+    msedge --headless=new --hide-scrollbars --force-device-scale-factor=2 --window-size=960,450
+           --default-background-color=00000000 --virtual-time-budget=5000
+           --screenshot=demo-dark.png "file:///…/demo.html#dark"
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PyppeSnap demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=block" rel="stylesheet">
+<style>
+  :root { --bg: #f6f8fa; --line: #d1d9e0; --ink: #1f2328; --muted: #59636e; --chrome: #ffffff; --field: #f6f8fa;
+          --green: #1a7f37; --red: #cf222e; --shadow: 0 1px 3px rgba(31,35,40,.08), 0 10px 28px rgba(31,35,40,.10); }
+  .dark { --bg: #151b23; --line: #3d444d; --ink: #f0f6fc; --muted: #9198a1; --chrome: #212830; --field: #151b23;
+          --green: #3fb950; --red: #f85149; --shadow: 0 1px 3px rgba(0,0,0,.5), 0 10px 28px rgba(0,0,0,.45); }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: transparent; }
+  body { width: 960px; height: 450px; font-family: Inter, "Segoe UI", sans-serif; color: var(--ink); }
+  .frame { height: 450px; border-radius: 22px; border: 1px solid var(--line); background: var(--bg);
+           padding: 28px 28px 0; display: flex; gap: 36px; }
+  figure { margin: 0; }
+  .window { width: 536px; border-radius: 12px; overflow: hidden; border: 1px solid var(--line);
+            background: var(--chrome); box-shadow: var(--shadow); }
+  .bar { height: 34px; display: flex; align-items: center; gap: 7px; padding: 0 12px; border-bottom: 1px solid var(--line); }
+  .bar span { width: 10px; height: 10px; border-radius: 50%; background: var(--line); }
+  .address { margin-left: 10px; flex: 1; height: 22px; border-radius: 6px; background: var(--field); border: 1px solid var(--line);
+             font-size: 11.5px; color: var(--muted); display: flex; align-items: center; padding: 0 10px; }
+  .window img { display: block; width: 100%; }
+  .sheet { position: relative; width: 332px; }
+  .sheet img { display: block; width: 100%; border-radius: 4px; border: 1px solid var(--line); box-shadow: var(--shadow); }
+  .sheet .badge { position: absolute; top: -9px; right: -9px; background: var(--red); color: #fff;
+                  font: 700 11px/1 Inter, sans-serif; letter-spacing: .06em; padding: 6px 8px; border-radius: 7px; }
+  figcaption { margin-top: 18px; }
+  .fn { font: 500 14px "JetBrains Mono", Consolas, monospace; display: flex; align-items: center; gap: 8px; }
+  .fn i { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+  .pdf .fn i { background: var(--red); }
+  .what { margin-top: 6px; font-size: 13.5px; color: var(--muted); }
+</style>
+</head>
+<body>
+<script>if (location.hash === '#dark') document.documentElement.className = 'dark';</script>
+<div class="frame">
+  <figure>
+    <div class="window">
+      <div class="bar"><span></span><span></span><span></span><div class="address">127.0.0.1:8000/demo-page.html</div></div>
+      <img src="out/demo-snapshot.png" alt="">
+    </div>
+    <figcaption>
+      <div class="fn"><i></i>get_image_snapshot_by_url(url)</div>
+      <div class="what">PNG of what fits in the 1600 × 900 browser window</div>
+    </figcaption>
+  </figure>
+  <figure class="pdf">
+    <div class="sheet"><img src="out/demo-pdf-page.png" alt=""><div class="badge">PDF</div></div>
+    <figcaption>
+      <div class="fn"><i></i>get_pdf_snapshot_by_url(url)</div>
+      <div class="what">PDF of the whole page, on a single sheet</div>
+    </figcaption>
+  </figure>
+</div>
+</body>
+</html>

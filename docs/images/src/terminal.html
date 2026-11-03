@@ -1,0 +1,81 @@
+<!doctype html>
+<!--
+  README terminal image. Shows the real commands and output saved in out/terminal.js by
+  take_demo_snapshots.py; only the long base64 line is shortened. Render with e.g.
+    msedge --headless=new --hide-scrollbars --force-device-scale-factor=2 --window-size=960,520
+           --default-background-color=00000000 --virtual-time-budget=5000
+           --screenshot=terminal.png "file:///…/terminal.html"
+  and trim the transparent space below the window (magick terminal.png -trim +repage terminal.png).
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PyppeSnap terminal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600&family=JetBrains+Mono:ital,wght@0,400;0,600;1,400&display=block" rel="stylesheet">
+<style>
+  html, body { margin: 0; background: transparent; }
+  .term { width: 960px; box-sizing: border-box; border-radius: 14px; overflow: hidden;
+          background: #161b22; border: 1px solid #3d444d; color: #e6edf3; }
+  .bar { height: 38px; display: flex; align-items: center; padding: 0 16px; background: #212830;
+         border-bottom: 1px solid #3d444d; position: relative; }
+  .bar span { width: 12px; height: 12px; border-radius: 50%; margin-right: 8px; }
+  .bar .t { position: absolute; left: 0; right: 0; text-align: center; font: 600 13px Inter, "Segoe UI", sans-serif; color: #9198a1; }
+  pre { margin: 0; padding: 18px 24px 22px; font: 14px/22px "JetBrains Mono", Consolas, monospace; white-space: pre; }
+  .p { color: #3fb950; font-weight: 600; }
+  .cmd { color: #ffffff; font-weight: 600; }
+  .opt { color: #79c0ff; }
+  .val { color: #a5d6ff; }
+  .op { color: #ff7b72; }
+  .dim { color: #7d8590; }
+  .key { color: #d2a8ff; }
+  .b64 { color: #c9d1d9; }
+  .cut { color: #7d8590; font-style: italic; }
+  .cursor { display: inline-block; width: 9px; height: 18px; background: #e6edf3; vertical-align: -3px; }
+</style>
+<script src="out/terminal.js"></script>
+</head>
+<body>
+<div class="term">
+  <div class="bar"><span style="background:#ff5f57"></span><span style="background:#febc2e"></span><span style="background:#28c840"></span><div class="t">bash</div></div>
+  <pre id="screen"></pre>
+</div>
+<script>
+  const COLUMNS = 106;
+  const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const span = (cls, s) => `<span class="${cls}">${esc(s)}</span>`;
+
+  function command(line) {
+    return span('p', '$ ') + line.split(' ').map(word => {
+      if (['|', '>'].includes(word)) return span('op', word);
+      if (word.startsWith('--') || /^-[a-z]$/.test(word)) return span('opt', word);
+      if (word.includes('://') || /^\d+p$/.test(word) || ['img', 'pdf'].includes(word)) return span('val', word);
+      if (['pyppesnap', 'sed', 'base64', 'file'].includes(word)) return span('cmd', word);
+      return esc(word);
+    }).join(' ');
+  }
+
+  function output(text) {
+    return text.replace(/\n$/, '').split('\n').map(line => {
+      if (/^-{5,}/.test(line)) return span('dim', line);
+      const kv = line.match(/^(URL|Type): (.*)$/);
+      if (kv) return span('key', kv[1] + ':') + ' ' + esc(kv[2]);
+      if (line.length > COLUMNS * 2) {
+        const head = line.slice(0, COLUMNS * 2), tail = line.slice(-56);
+        const hidden = (line.length - head.length - tail.length).toLocaleString('en');
+        return span('b64', head.slice(0, COLUMNS)) + '\n' + span('b64', head.slice(COLUMNS)) + '\n' +
+               span('cut', `        ⋯ ${hidden} more base64 characters ⋯`) + '\n' + span('b64', tail);
+      }
+      return esc(line);
+    }).join('\n');
+  }
+
+  const parts = [];
+  for (const step of window.SESSION) {
+    parts.push(command(step.command));
+    if (step.output.trim()) parts.push(output(step.output));
+  }
+  parts.push(span('p', '$ ') + '<span class="cursor"></span>');
+  document.getElementById('screen').innerHTML = parts.join('\n');
+</script>
+</body>
+</html>
