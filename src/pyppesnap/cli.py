@@ -2,7 +2,7 @@
 import argparse
 from typing import Optional, Sequence
 
-from .snapshot import get_image_snapshot_by_url, get_pdf_snapshot_by_url
+from .snapshot import DEFAULT_HEIGHT, DEFAULT_WIDTH, get_image_snapshot_by_url, get_pdf_snapshot_by_url
 
 TYPES = ('img', 'pdf')
 
@@ -15,7 +15,8 @@ def get_parser() -> argparse.ArgumentParser:
     parser.add_argument('--url', type=str,
                         help='the page to snapshot, with its scheme, e.g. https://example.com')
     parser.add_argument('--type', type=str, default='img',
-                        help='img: PNG of the first 1600x900 pixels (default); pdf: the whole page')
+                        help='img: PNG of the first {}x{} pixels (default); pdf: the whole page'
+                        .format(DEFAULT_WIDTH, DEFAULT_HEIGHT))
     return parser
 
 

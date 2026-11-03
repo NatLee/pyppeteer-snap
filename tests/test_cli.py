@@ -81,3 +81,8 @@ def test_unknown_type_exits_with_2(monkeypatch, capsys):
 
     assert status == 2
     assert 'Please select type `img` or `pdf`.' in lines
+
+
+def test_help_names_the_default_window_size():
+    # 1600 x 900 is the documented default of get_image_snapshot_by_url().
+    assert 'PNG of the first 1600x900 pixels (default)' in ' '.join(cli.get_parser().format_help().split())

@@ -27,18 +27,40 @@ NAVIGATION_TIMEOUT = 30
 #: Seconds Chromium gets to quit before it is killed.
 CLOSE_TIMEOUT = 10
 
+#: The browser window in CSS pixels when the caller does not choose one.
+DEFAULT_WIDTH = 1600
+DEFAULT_HEIGHT = 900
+#: Image pixels per CSS pixel: a 1600 x 900 window gives a 1600 x 900 PNG.
+DEVICE_SCALE_FACTOR = 1
+#: CSS pixels added to the PDF sheet's height, so that rounding cannot push
+#: the end of the page onto a second sheet.
+PDF_EXTRA_HEIGHT = 5
+#: Chromium switches that let it run in containers and on CI: no sandbox
+#: (unavailable when running as root, as in most Docker images), no /dev/shm
+#: (tiny in Docker), and no GPU.
+CHROMIUM_ARGS = (
+    '--no-sandbox',
+    '--disable-setuid-sandbox',
+    '--disable-dev-shm-usage',
+    '--disable-accelerated-2d-canvas',
+    '--no-zygote',
+    '--disable-gpu',
+)
+
 
 def _launch_options() -> Dict[str, Any]:
+    """Everything pyppeteer's launch() is given."""
     return {
         'headless': True,
-        'args': [
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage',
-            '--disable-accelerated-2d-canvas',
-            '--no-zygote',
-            '--disable-gpu',
-        ],
+        'args': list(CHROMIUM_ARGS),
+        # The snapshot runs in a worker thread, and Python only lets the main
+        # thread install signal handlers.
+        'handleSIGINT': False,
+        'handleSIGTERM': False,
+        'handleSIGHUP': False,
+        # _close() always closes Chromium. pyppeteer's own exit hook would run
+        # on an event loop that is closed by then, and only print a traceback.
+        'autoClose': False,
     }
 
 
@@ -61,7 +83,7 @@ async def shot_with_pdf(page: Page) -> bytes:
         {
             'printBackground': True,
             'width': dimensions['width'],
-            'height': dimensions['height'] + 5,
+            'height': dimensions['height'] + PDF_EXTRA_HEIGHT,
         }
     )
     return base64.b64encode(data)
@@ -72,7 +94,7 @@ async def _close(browser: Browser) -> None:
     try:
         await asyncio.wait_for(browser.close(), CLOSE_TIMEOUT)
     except BaseException as error:
-        process = getattr(browser, 'process', None)
+        process = browser.process  # None only for a browser from connect()
         if process is not None and process.poll() is None:
             process.kill()
         # Let a cancellation (the time limit ran out while closing) carry on.
@@ -85,23 +107,14 @@ async def _snapshot(url: str, capture: Capture, width: int, height: int, is_mobi
 
     Errors are raised, and Chromium is closed in every case.
     """
-    browser = await launch(
-        # Signal handlers can only be installed from the main thread.
-        handleSIGINT=False,
-        handleSIGTERM=False,
-        handleSIGHUP=False,
-        # Chromium is closed below. pyppeteer's own exit hook would run on an
-        # event loop that is closed by then, and only print a traceback.
-        autoClose=False,
-        options=_launch_options(),
-    )
+    browser = await launch(options=_launch_options())
     try:
         page = await browser.newPage()
         await page.setViewport(
             {
                 'width': width,
                 'height': height,
-                'deviceScaleFactor': 1,
+                'deviceScaleFactor': DEVICE_SCALE_FACTOR,
                 'isMobile': is_mobile,
             }
         )
@@ -147,8 +160,8 @@ def describe_error(url: str, error: BaseException) -> str:
     return message
 
 
-def get_snapshot_by_url(url: str, method: Capture, width: int = 1600, height: int = 900,
-                        is_mobile: bool = False) -> Any:
+def get_snapshot_by_url(url: str, method: Capture, width: int = DEFAULT_WIDTH,
+                        height: int = DEFAULT_HEIGHT, is_mobile: bool = False) -> Any:
     """Return ``method(page)`` for ``url``; on failure print the reason and return None."""
     try:
         with ThreadPoolExecutor(max_workers=1, thread_name_prefix='pyppesnap') as worker:
@@ -158,7 +171,7 @@ def get_snapshot_by_url(url: str, method: Capture, width: int = 1600, height: in
         return None
 
 
-def get_image_snapshot_by_url(url: str, width: int = 1600, height: int = 900,
+def get_image_snapshot_by_url(url: str, width: int = DEFAULT_WIDTH, height: int = DEFAULT_HEIGHT,
                               is_mobile: bool = False) -> Optional[str]:
     """Return a PNG of the page's first ``width`` x ``height`` pixels as base64 text.
 
@@ -167,7 +180,7 @@ def get_image_snapshot_by_url(url: str, width: int = 1600, height: int = 900,
     return get_snapshot_by_url(url=url, method=shot_with_image, width=width, height=height, is_mobile=is_mobile)
 
 
-def get_pdf_snapshot_by_url(url: str, width: int = 1600, height: int = 900,
+def get_pdf_snapshot_by_url(url: str, width: int = DEFAULT_WIDTH, height: int = DEFAULT_HEIGHT,
                             is_mobile: bool = False) -> Optional[bytes]:
     """Return the whole page as a single-page PDF, base64-encoded bytes.
 
