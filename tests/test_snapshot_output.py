@@ -46,6 +46,22 @@ def take_snapshot(function_name):
     return found['TYPE'], found['DATA']
 
 
+def run_cli(*args):
+    """Run the pyppesnap command; return (exit status, output lines)."""
+    try:
+        result = subprocess.run(
+            [sys.executable, '-c', 'from pyppesnap.cli import main; raise SystemExit(main())']
+            + list(args),
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            universal_newlines=True,
+            timeout=TIME_LIMIT,
+        )
+    except subprocess.TimeoutExpired:
+        raise AssertionError('pyppesnap {} did not finish within {} s'.format(' '.join(args), TIME_LIMIT))
+    return result.returncode, result.stdout.splitlines()
+
+
 class TestSnapshotOutput(unittest.TestCase):
 
     def test_image_snapshot_is_base64_png(self):
@@ -57,6 +73,19 @@ class TestSnapshotOutput(unittest.TestCase):
         type_name, data = take_snapshot('get_pdf_snapshot_by_url')
         self.assertEqual(type_name, 'bytes')
         self.assertTrue(base64.b64decode(data).startswith(b'%PDF-'))
+
+    def test_cli_prints_the_pdf_as_base64(self):
+        status, lines = run_cli('--url', URL, '--type', 'pdf')
+        self.assertEqual(status, 0, lines)
+        self.assertEqual(lines[3], '--------------- Base64 ------------------')
+        self.assertTrue(base64.b64decode(lines[4]).startswith(b'%PDF-'))
+
+    def test_cli_reports_a_page_that_cannot_load(self):
+        status, lines = run_cli('--url', 'https://no-such-host.invalid')
+        self.assertEqual(status, 1, lines)
+        self.assertIn(
+            'Could not take a snapshot of https://no-such-host.invalid: '
+            'net::ERR_NAME_NOT_RESOLVED at https://no-such-host.invalid', lines)
 
 
 if __name__ == '__main__':
