@@ -1,7 +1,15 @@
+import re
+
 import setuptools
 
 with open('README.md', 'r', encoding='utf-8') as fh:
     long_description = fh.read()
+# PyPI cannot show the README images by their relative path: point them at GitHub.
+long_description = re.sub(
+    r'(src|srcset)="docs/',
+    r'\1="https://raw.githubusercontent.com/NatLee/pyppeteer-snap/main/docs/',
+    long_description,
+)
 
 setuptools.setup(
     name='PyppeSnap',

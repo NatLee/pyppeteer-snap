@@ -1,0 +1,129 @@
+<!doctype html>
+<!-- A made-up page for the README demo: take_demo_snapshots.py serves it and snapshots it with pyppesnap. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>The Lighthouse Loop · Trailnotes</title>
+<style>
+  :root {
+    --ink: #13233a; --muted: #5b6b80; --line: #e3e8ef; --paper: #fbfaf7;
+    --sea: #1f5f8b; --dawn: #f29e4c; --accent: #e4572e;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Inter, "DejaVu Sans", sans-serif; color: var(--ink); background: var(--paper); }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 0 40px; }
+
+  nav { display: flex; align-items: center; justify-content: space-between; height: 72px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 20px; letter-spacing: -0.02em; }
+  .brand i { width: 26px; height: 26px; border-radius: 8px; background: linear-gradient(135deg, var(--dawn), var(--accent)); }
+  nav ul { display: flex; gap: 32px; list-style: none; margin: 0; padding: 0; color: var(--muted); font-weight: 500; }
+  nav .cta { padding: 9px 18px; border-radius: 999px; background: var(--ink); color: #fff; font-weight: 600; font-size: 15px; }
+
+  .hero { position: relative; height: 560px; border-radius: 28px; overflow: hidden; color: #fff;
+          background: linear-gradient(180deg, #24345e 0%, #6b4f7a 38%, #e98a5b 72%, #f6c28b 100%); }
+  .hero svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .hero .text { position: absolute; left: 64px; top: 92px; max-width: 620px; }
+  .kicker { text-transform: uppercase; letter-spacing: 0.18em; font-size: 14px; font-weight: 700; opacity: 0.85; }
+  h1 { font-size: 76px; line-height: 1.02; letter-spacing: -0.035em; margin: 18px 0 20px; font-weight: 800; }
+  .hero p { font-size: 22px; line-height: 1.5; margin: 0; opacity: 0.92; }
+  .chips { display: flex; gap: 10px; margin-top: 30px; }
+  .chips span { padding: 9px 16px; border-radius: 999px; background: rgba(255,255,255,0.16);
+                border: 1px solid rgba(255,255,255,0.35); font-weight: 600; font-size: 15px; }
+
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin: 44px 0 64px; }
+  .stat { padding: 22px 24px; border: 1px solid var(--line); border-radius: 18px; background: #fff; }
+  .stat b { display: block; font-size: 34px; letter-spacing: -0.02em; }
+  .stat span { color: var(--muted); font-size: 15px; }
+
+  h2 { font-size: 38px; letter-spacing: -0.02em; margin: 0 0 8px; }
+  .lead { color: var(--muted); font-size: 18px; margin: 0 0 28px; }
+  .stops { display: grid; grid-template-columns: repeat(5, 1fr); gap: 18px; }
+  .stop { padding: 22px; border-radius: 18px; background: #fff; border: 1px solid var(--line); }
+  .stop .n { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center;
+             background: var(--sea); color: #fff; font-weight: 700; }
+  .stop h3 { font-size: 19px; margin: 16px 0 8px; }
+  .stop p { color: var(--muted); font-size: 15px; line-height: 1.55; margin: 0 0 14px; }
+  .stop small { font-weight: 600; color: var(--sea); }
+
+  .two { display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; margin: 64px 0; }
+  .card { padding: 30px 32px; border-radius: 22px; background: #fff; border: 1px solid var(--line); }
+  .card h2 { font-size: 28px; }
+  .card ul { margin: 18px 0 0; padding: 0; list-style: none; columns: 2; }
+  .card li { padding: 7px 0 7px 30px; position: relative; font-size: 17px; break-inside: avoid; }
+  .card li::before { content: ""; position: absolute; left: 0; top: 10px; width: 16px; height: 16px;
+                     border-radius: 5px; border: 2px solid var(--sea); }
+  .note { background: #13233a; color: #dfe7f2; border: 0; }
+  .note h2 { color: #fff; }
+  .note p { font-size: 17px; line-height: 1.6; margin: 14px 0 0; }
+  footer { border-top: 1px solid var(--line); padding: 28px 0 40px; color: var(--muted); font-size: 15px;
+           display: flex; justify-content: space-between; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <div class="brand"><i></i>Trailnotes</div>
+    <ul><li>Walks</li><li>Maps</li><li>Journal</li><li>About</li></ul>
+    <span class="cta">Save this walk</span>
+  </nav>
+
+  <section class="hero">
+    <svg viewBox="0 0 1160 560" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <circle cx="860" cy="372" r="92" fill="#ffd9a0" opacity="0.9"/>
+      <circle cx="860" cy="372" r="150" fill="#ffd9a0" opacity="0.18"/>
+      <!-- cliff and lighthouse -->
+      <path d="M690 560 L700 430 Q760 400 830 410 L905 420 Q960 432 985 470 L1010 560 Z" fill="#2b2440"/>
+      <rect x="772" y="250" width="34" height="165" fill="#f4efe6"/>
+      <rect x="772" y="290" width="34" height="18" fill="#e4572e"/>
+      <rect x="772" y="345" width="34" height="18" fill="#e4572e"/>
+      <path d="M766 250 h46 l-6 -22 h-34 z" fill="#2b2440"/>
+      <rect x="778" y="208" width="22" height="20" fill="#ffe7a8"/>
+      <path d="M770 208 h38 l-19 -20 z" fill="#2b2440"/>
+      <path d="M800 218 L1160 160 L1160 250 Z" fill="#ffe7a8" opacity="0.22"/>
+      <!-- sea -->
+      <path d="M0 450 Q145 430 290 450 T580 450 T870 456 T1160 450 V560 H0 Z" fill="#3d4f7c"/>
+      <path d="M0 480 Q145 462 290 482 T580 480 T870 486 T1160 480 V560 H0 Z" fill="#2c3b63"/>
+      <path d="M0 515 Q145 500 290 517 T580 515 T870 520 T1160 515 V560 H0 Z" fill="#1f2b4c"/>
+      <path d="M560 300 q8 -8 16 0 q8 -8 16 0" stroke="#2b2440" stroke-width="3" fill="none"/>
+      <path d="M612 272 q6 -6 12 0 q6 -6 12 0" stroke="#2b2440" stroke-width="3" fill="none"/>
+    </svg>
+    <div class="text">
+      <div class="kicker">Coastal walk · North shore</div>
+      <h1>The Lighthouse Loop</h1>
+      <p>Cliff paths, two quiet coves and a lighthouse at the far end. Start before sunrise and you will have the trail to yourself.</p>
+      <div class="chips"><span>12 km</span><span>4 hours</span><span>Easy</span><span>Loop</span></div>
+    </div>
+  </section>
+
+  <div class="stats">
+    <div class="stat"><b>12.4 km</b><span>Total distance</span></div>
+    <div class="stat"><b>180 m</b><span>Elevation gain</span></div>
+    <div class="stat"><b>5</b><span>Stops worth the pause</span></div>
+    <div class="stat"><b>05:40</b><span>Best start time</span></div>
+  </div>
+
+  <h2>Five stops</h2>
+  <p class="lead">Each stop is a good place for water, photos or simply sitting down for a while.</p>
+  <div class="stops">
+    <div class="stop"><div class="n">1</div><h3>Harbour steps</h3><p>The trail starts behind the fish market. Fill your bottle at the fountain.</p><small>0 km</small></div>
+    <div class="stop"><div class="n">2</div><h3>Pine ridge</h3><p>A short climb through pines with the first view over the bay.</p><small>2.6 km</small></div>
+    <div class="stop"><div class="n">3</div><h3>Shell cove</h3><p>A sheltered beach. At low tide you can walk around the rocks.</p><small>5.1 km</small></div>
+    <div class="stop"><div class="n">4</div><h3>The lighthouse</h3><p>Still working since 1883. The gallery opens at nine on weekends.</p><small>7.9 km</small></div>
+    <div class="stop"><div class="n">5</div><h3>Salt flats</h3><p>A flat path back to town past the old salt pans and herons.</p><small>12.4 km</small></div>
+  </div>
+
+  <div class="two">
+    <div class="card">
+      <h2>What to bring</h2>
+      <ul><li>1.5 l of water</li><li>Wind jacket</li><li>Sun hat</li><li>Snacks</li><li>Trail shoes</li><li>Head torch</li></ul>
+    </div>
+    <div class="card note">
+      <h2>Good to know</h2>
+      <p>The cliff path between stops 2 and 3 closes in strong wind. When it does, follow the road signs inland; it adds about 1 km.</p>
+    </div>
+  </div>
+
+  <footer><span>Trailnotes · walks worth getting up early for</span><span>Last checked in October</span></footer>
+</div>
+</body>
+</html>

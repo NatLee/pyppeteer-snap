@@ -1,3 +1,11 @@
+"""A tiny Flask app: type a URL, get a PNG or PDF snapshot of it back.
+
+    pip install pyppesnap flask
+    python main.py        # then open http://127.0.0.1:9898
+
+Do not put it on the internet as it is: it opens any URL a visitor types,
+including addresses inside your own network.
+"""
 from flask import Flask
 from flask import request, render_template
 
@@ -5,24 +13,28 @@ from pyppesnap import get_image_snapshot_by_url, get_pdf_snapshot_by_url
 
 app = Flask(__name__)
 
+
+def snapshot(take):
+    data = take(request.form.get("web_address", ""))
+    if data is None:
+        return "Could not take a snapshot of that page.", 502
+    return data
+
+
 @app.route("/", methods=["GET", "POST"])
 def index():
     return render_template("index.html")
 
+
 @app.route("/get_web_image", methods=["POST"])
 def get_web_image():
-    if request.method == "POST":
-        web_address = request.form.get("web_address")
-        screenshot = get_image_snapshot_by_url(web_address)
-        return screenshot
+    return snapshot(get_image_snapshot_by_url)
+
 
 @app.route("/get_web_pdf", methods=["POST"])
 def get_web_pdf():
-    if request.method == "POST":
-        web_address = request.form.get("web_address")
-        screenshot = get_pdf_snapshot_by_url(web_address)
-        return screenshot
+    return snapshot(get_pdf_snapshot_by_url)
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=9898, debug=True)
+    app.run(host="127.0.0.1", port=9898)
