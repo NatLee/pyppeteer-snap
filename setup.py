@@ -11,11 +11,11 @@ setuptools.setup(
     keywords='pyppeteer, snapshot',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/natlee/PyppeSnap',
+    url='https://github.com/NatLee/pyppeteer-snap',
     project_urls={
-        'Documentation': 'https://github.com/natlee/PyppeSnap',
-        'Bug Reports': 'https://github.com/natlee/PyppeSnap/issues',
-        'Source Code': 'https://github.com/natlee/PyppeSnap',
+        'Documentation': 'https://github.com/NatLee/pyppeteer-snap',
+        'Bug Reports': 'https://github.com/NatLee/pyppeteer-snap/issues',
+        'Source Code': 'https://github.com/NatLee/pyppeteer-snap',
         # 'Funding': '',
         # 'Say Thanks!': '',
     },
@@ -32,15 +32,23 @@ setuptools.setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
+        'Programming Language :: Python :: 3.13',
+        'Programming Language :: Python :: 3.14',
         'Programming Language :: Python :: 3 :: Only',
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
     ],
     python_requires='>=3.7',
-    install_requires=['websockets==8.1', 'pyee==6.0.0', 'pyppeteer>=0.0.25'],
+    # pyppeteer brings its own compatible websockets and pyee. Pinning those two
+    # (websockets 8.1, pyee 6.0.0) forced pyppeteer 0.0.25, which hangs on
+    # Python 3.10+. 1.0.2 is the newest pyppeteer that still runs on Python 3.7.
+    install_requires=['pyppeteer>=1.0.2'],
     extras_require={
         'dev': ['check-manifest'],
-        # 'test': ['coverage'],
+        'test': ['pytest'],
     },
     entry_points={
         'console_scripts': [

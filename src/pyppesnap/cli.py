@@ -29,9 +29,13 @@ def main():
 
     print('--------------- Base64 ------------------')
     if type_.lower() == 'img':
-        print(get_image_snapshot_by_url(url))
+        data = get_image_snapshot_by_url(url)
     elif type_.lower() == 'pdf':
-        print(get_pdf_snapshot_by_url(url))
+        data = get_pdf_snapshot_by_url(url)
+    # The PDF snapshot is base64 bytes: print it as text, not as b'...'.
+    if isinstance(data, bytes):
+        data = data.decode('ascii')
+    print(data)
 
     print('-------------------------------------')
     return
