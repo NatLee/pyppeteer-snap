@@ -11,11 +11,11 @@ setuptools.setup(
     keywords='pyppeteer, snapshot',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/natlee/PyppeSnap',
+    url='https://github.com/NatLee/pyppeteer-snap',
     project_urls={
-        'Documentation': 'https://github.com/natlee/PyppeSnap',
-        'Bug Reports': 'https://github.com/natlee/PyppeSnap/issues',
-        'Source Code': 'https://github.com/natlee/PyppeSnap',
+        'Documentation': 'https://github.com/NatLee/pyppeteer-snap',
+        'Bug Reports': 'https://github.com/NatLee/pyppeteer-snap/issues',
+        'Source Code': 'https://github.com/NatLee/pyppeteer-snap',
         # 'Funding': '',
         # 'Say Thanks!': '',
     },
@@ -32,6 +32,11 @@ setuptools.setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
+        'Programming Language :: Python :: 3.13',
+        'Programming Language :: Python :: 3.14',
         'Programming Language :: Python :: 3 :: Only',
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
@@ -43,7 +48,7 @@ setuptools.setup(
     install_requires=['pyppeteer>=1.0.2'],
     extras_require={
         'dev': ['check-manifest'],
-        # 'test': ['coverage'],
+        'test': ['pytest'],
     },
     entry_points={
         'console_scripts': [
