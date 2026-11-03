@@ -41,13 +41,13 @@ def test_pdf_snapshot_is_base64_bytes_of_the_whole_page(chromium):
 def test_chromium_runs_headless_without_signal_handlers(chromium):
     pyppesnap.get_image_snapshot_by_url(URL)
 
-    kwargs = chromium.launch_kwargs
-    assert kwargs['options']['headless'] is True
-    assert '--no-sandbox' in kwargs['options']['args']
+    options = chromium.launch_kwargs['options']
+    assert options['headless'] is True
+    assert '--no-sandbox' in options['args']
     # The snapshot runs in a worker thread, where Python cannot install signal handlers.
-    assert kwargs['handleSIGINT'] is kwargs['handleSIGTERM'] is kwargs['handleSIGHUP'] is False
+    assert options['handleSIGINT'] is options['handleSIGTERM'] is options['handleSIGHUP'] is False
     # pyppesnap closes Chromium itself; pyppeteer's exit hook only printed a traceback.
-    assert kwargs['autoClose'] is False
+    assert options['autoClose'] is False
 
 
 def test_chromium_is_closed_when_opening_a_tab_fails(chromium, capsys):
@@ -151,6 +151,17 @@ def test_chromium_that_does_not_start_gets_a_hint(chromium, capsys):
     out = capsys.readouterr().out
     assert 'Browser closed unexpectedly:' in out
     assert 'system libraries' in out
+
+
+def test_only_the_first_matching_hint_is_added(chromium, capsys):
+    # A URL without a scheme is the likelier cause, so that hint wins.
+    chromium.launch_error = BrowserError('Browser closed unexpectedly:\n')
+
+    assert pyppesnap.get_image_snapshot_by_url('example.com') is None
+    out = capsys.readouterr().out
+    assert out.count(' (') == 1
+    assert '(the URL needs a scheme, e.g. https://example.com)' in out
+    assert 'system libraries' not in out
 
 
 def test_old_coroutine_still_prints_and_returns_none(chromium, capsys):

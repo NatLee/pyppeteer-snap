@@ -9,7 +9,7 @@
   <a href="https://github.com/NatLee/pyppeteer-snap/actions/workflows/test.yml"><img src="https://github.com/NatLee/pyppeteer-snap/actions/workflows/test.yml/badge.svg" alt="Test"></a>
   <a href="https://pypi.org/project/PyppeSnap/"><img src="https://img.shields.io/pypi/v/PyppeSnap" alt="PyPI version"></a>
   <a href="https://pypi.org/project/PyppeSnap/"><img src="https://img.shields.io/pypi/pyversions/PyppeSnap" alt="Python versions"></a>
-  <a href="https://github.com/NatLee/pyppeteer-snap/blob/main/LICENSE"><img src="https://img.shields.io/pypi/l/PyppeSnap" alt="License: MIT"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/pypi/l/PyppeSnap" alt="License: MIT"></a>
 </p>
 
 PyppeSnap takes a snapshot of a web page and hands it to you as base64 text: a PNG of what fits in the
@@ -129,7 +129,7 @@ The exit status is 0 when it worked, 1 when the snapshot failed (the reason is p
 
 ## Use it in a web app
 
-[`example/`](https://github.com/NatLee/pyppeteer-snap/tree/main/example) is a small Flask app: type a URL,
+[`example/`](example/) is a small Flask app: type a URL,
 press a button, and the server returns the snapshot, which the page shows as an image or an inline PDF.
 
 ```bash
@@ -151,9 +151,9 @@ tox -e py         # what CI runs: check-manifest + tests
 ```
 
 The README images are made from the HTML files in
-[`docs/images/src/`](https://github.com/NatLee/pyppeteer-snap/tree/main/docs/images/src).
+[`docs/images/src/`](docs/images/src/).
 `take_demo_snapshots.py` takes the real snapshots with PyppeSnap; each HTML file says how to render it.
 
 ## License
 
-[MIT](https://github.com/NatLee/pyppeteer-snap/blob/main/LICENSE)
+[MIT](LICENSE)

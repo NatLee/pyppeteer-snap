@@ -34,8 +34,9 @@ COMMANDS = [
 
 
 def serve(directory):
+    """Serve ``directory`` on a free local port (the OS picks it)."""
     handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=str(directory))
-    server = http.server.ThreadingHTTPServer(('127.0.0.1', 8000), handler)
+    server = http.server.ThreadingHTTPServer(('127.0.0.1', 0), handler)
     threading.Thread(target=server.serve_forever, daemon=True).start()
     return server
 
@@ -43,7 +44,8 @@ def serve(directory):
 def snapshot_demo_page():
     server = serve(HERE)
     try:
-        url = 'http://127.0.0.1:8000/demo-page.html'
+        host, port = server.server_address[:2]
+        url = 'http://{}:{}/demo-page.html'.format(host, port)
         (OUT / 'demo-snapshot.png').write_bytes(base64.b64decode(get_image_snapshot_by_url(url)))
         (OUT / 'demo-snapshot.pdf').write_bytes(base64.b64decode(get_pdf_snapshot_by_url(url)))
     finally:

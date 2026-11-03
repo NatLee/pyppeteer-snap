@@ -82,5 +82,5 @@ def chromium(monkeypatch):
         return state.browser
 
     monkeypatch.setattr(snapshot, 'launch', fake_launch)
-    monkeypatch.setattr(snapshot, '_ensure_chromium', lambda: None, raising=False)
+    monkeypatch.setattr(snapshot, '_ensure_chromium', lambda: None)
     return state
