@@ -5,6 +5,12 @@ import sys
 import pyppesnap.cli as cli
 
 
+def fake_snapshot(monkeypatch, type_, take):
+    """Make `--type type_` call `take(url)` instead of opening Chromium."""
+    prints, _ = cli.SNAPSHOTS[type_]
+    monkeypatch.setitem(cli.SNAPSHOTS, type_, (prints, take))
+
+
 def run_cli(monkeypatch, capsys, *args):
     monkeypatch.setattr(sys, 'argv', ['pyppesnap'] + list(args))
     status = cli.main()
@@ -13,7 +19,7 @@ def run_cli(monkeypatch, capsys, *args):
 
 def test_pdf_is_printed_as_plain_base64(monkeypatch, capsys):
     # get_pdf_snapshot_by_url returns base64 as bytes
-    monkeypatch.setattr(cli, 'get_pdf_snapshot_by_url', lambda url: b'JVBERi0xLjQK')
+    fake_snapshot(monkeypatch, 'pdf', lambda url: b'JVBERi0xLjQK')
 
     status, lines = run_cli(monkeypatch, capsys, '--url', 'https://example.com', '--type', 'pdf')
 
@@ -24,7 +30,7 @@ def test_pdf_is_printed_as_plain_base64(monkeypatch, capsys):
 
 def test_image_is_printed_as_plain_base64(monkeypatch, capsys):
     # get_image_snapshot_by_url returns base64 as str
-    monkeypatch.setattr(cli, 'get_image_snapshot_by_url', lambda url: 'iVBORw0KGgo=')
+    fake_snapshot(monkeypatch, 'img', lambda url: 'iVBORw0KGgo=')
 
     status, lines = run_cli(monkeypatch, capsys, '--url', 'https://example.com', '--type', 'img')
 
@@ -40,15 +46,15 @@ def test_image_is_printed_as_plain_base64(monkeypatch, capsys):
 
 
 def test_type_defaults_to_img_and_ignores_case(monkeypatch, capsys):
-    monkeypatch.setattr(cli, 'get_image_snapshot_by_url', lambda url: 'png')
-    monkeypatch.setattr(cli, 'get_pdf_snapshot_by_url', lambda url: b'pdf')
+    fake_snapshot(monkeypatch, 'img', lambda url: 'png')
+    fake_snapshot(monkeypatch, 'pdf', lambda url: b'pdf')
 
     assert run_cli(monkeypatch, capsys, '--url', 'https://example.com')[1][4] == 'png'
     assert run_cli(monkeypatch, capsys, '--url', 'https://example.com', '--type', 'PDF')[1][4] == 'pdf'
 
 
 def test_main_accepts_an_argument_list(monkeypatch, capsys):
-    monkeypatch.setattr(cli, 'get_image_snapshot_by_url', lambda url: 'png')
+    fake_snapshot(monkeypatch, 'img', lambda url: 'png')
 
     assert cli.main(['--url', 'https://example.com']) == 0
     assert 'png' in capsys.readouterr().out.splitlines()
@@ -56,7 +62,7 @@ def test_main_accepts_an_argument_list(monkeypatch, capsys):
 
 def test_failed_snapshot_exits_with_1(monkeypatch, capsys):
     # The snapshot function prints the reason itself and returns None.
-    monkeypatch.setattr(cli, 'get_image_snapshot_by_url', lambda url: print('Could not take a snapshot'))
+    fake_snapshot(monkeypatch, 'img', lambda url: print('Could not take a snapshot'))
 
     status, lines = run_cli(monkeypatch, capsys, '--url', 'https://no-such-host.invalid')
 
