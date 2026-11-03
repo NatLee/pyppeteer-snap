@@ -37,7 +37,10 @@ setuptools.setup(
         'Operating System :: OS Independent',
     ],
     python_requires='>=3.7',
-    install_requires=['websockets==8.1', 'pyee==6.0.0', 'pyppeteer>=0.0.25'],
+    # pyppeteer brings its own compatible websockets and pyee. Pinning those two
+    # (websockets 8.1, pyee 6.0.0) forced pyppeteer 0.0.25, which hangs on
+    # Python 3.10+. 1.0.2 is the newest pyppeteer that still runs on Python 3.7.
+    install_requires=['pyppeteer>=1.0.2'],
     extras_require={
         'dev': ['check-manifest'],
         # 'test': ['coverage'],
