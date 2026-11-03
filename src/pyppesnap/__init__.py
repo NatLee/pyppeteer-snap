@@ -1,5 +1,5 @@
 """PyppeSnap: snapshots of websites as base64 PNG or PDF, taken with pyppeteer."""
-__version__ = "1.0.6"
+__version__ = "1.1.0"
 
 from .snapshot import get_image_snapshot_by_url
 from .snapshot import get_pdf_snapshot_by_url
