@@ -40,6 +40,7 @@ async def launch_ptppeteer_with_url(url:str, width:int, height:int, is_mobile:bo
         handleSIGINT=False, handleSIGTERM=False, handleSIGHUP=False, options=options
     )
     page = await browser.newPage()
+    data = None
     try:
         await page.setViewport(
             {
