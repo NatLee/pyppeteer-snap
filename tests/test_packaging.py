@@ -31,6 +31,12 @@ def test_links_point_at_the_github_page_in_the_release_tag():
         '[`example/`](' + PAGE + 'example/) and <a href="' + PAGE + 'LICENSE">MIT</a>')
 
 
+def test_a_link_around_an_image_is_rewritten_too():
+    readme = '[![License](https://img.shields.io/pypi/l/PyppeSnap)](LICENSE)'
+
+    assert absolute_links(readme, 'v9.9.9') == '[![License](https://img.shields.io/pypi/l/PyppeSnap)](' + PAGE + 'LICENSE)'
+
+
 def test_absolute_links_and_anchors_are_left_alone():
     readme = ('[PyPI](https://pypi.org/project/PyppeSnap/) [up](#installation) '
               '<img src="https://img.shields.io/pypi/v/PyppeSnap"> [mail](mailto:a@b.c) '
