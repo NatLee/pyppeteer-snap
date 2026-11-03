@@ -206,6 +206,11 @@ async def launch_ptppeteer_with_url(url: str, width: int, height: int, is_mobile
     """Old coroutine, kept so code that imported it keeps working.
 
     Like before, it prints the reason and returns None when the snapshot fails.
+
+    Compatibility shim for code written against 1.0.x. It runs on the
+    caller's loop, without the overall time limit, and keeps the old typo in
+    its name. It was never in the README: remove it in the next major release
+    (2.0.0). New code should call get_snapshot_by_url().
     """
     try:
         return await _snapshot(url, method, width, height, is_mobile)
