@@ -24,7 +24,7 @@ database, an email or an `<img src="data:…">`.
 pip install pyppesnap
 ```
 
-The package is called [`PyppeSnap` on PyPI](https://pypi.org/project/PyppeSnap/) and is imported as
+The package is called PyppeSnap [on PyPI](https://pypi.org/project/PyppeSnap/) and is imported as
 `pyppesnap`. It works on Python 3.7–3.14.
 
 **The first snapshot downloads Chromium.** Pyppeteer fetches its own Chromium build (about 100–200 MB)
@@ -64,10 +64,14 @@ Here is what the two functions return for the same page (real output, decoded):
 
 ## API
 
-| Function | Captures | Returns | On failure |
-|---|---|---|---|
-| `get_image_snapshot_by_url(url, width=1600, height=900, is_mobile=False)` | what fits in the `width` × `height` browser window | PNG as base64 `str` | prints the reason, returns `None` |
-| `get_pdf_snapshot_by_url(url, width=1600, height=900, is_mobile=False)` | the whole page, laid out `width` pixels wide, on a single sheet | PDF as base64 `bytes` | prints the reason, returns `None` |
+Both functions take the same arguments: `(url, width=1600, height=900, is_mobile=False)`.
+
+| Function | Captures | Returns |
+|---|---|---|
+| `get_image_snapshot_by_url` | what fits in the `width` × `height` browser window | PNG as base64 `str` |
+| `get_pdf_snapshot_by_url` | the whole page, laid out `width` pixels wide, on a single sheet | PDF as base64 `bytes` |
+
+When a snapshot fails, both print the reason and return `None`.
 
 - `url` needs its scheme: `https://example.com`, not `example.com`.
 - `width` and `height` set the size of the browser window in CSS pixels.
