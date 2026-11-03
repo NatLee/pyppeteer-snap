@@ -117,36 +117,17 @@ def _ensure_chromium() -> None:
         download_chromium()
 
 
-def _close_loop(loop: asyncio.AbstractEventLoop) -> None:
-    """Cancel what pyppeteer left running, then close the loop.
-
-    Without this, Python prints "Task was destroyed but it is pending!"
-    after every snapshot.
-    """
-    try:
-        pending = [task for task in asyncio.all_tasks(loop) if not task.done()]
-        for task in pending:
-            task.cancel()
-        if pending:
-            loop.run_until_complete(asyncio.gather(*pending, return_exceptions=True))
-        loop.run_until_complete(loop.shutdown_asyncgens())
-    finally:
-        asyncio.set_event_loop(None)
-        loop.close()
-
-
 def _run_snapshot(url: str, capture: Capture, width: int, height: int, is_mobile: bool) -> Any:
-    """Take the snapshot on a new event loop in the current (worker) thread."""
-    loop = asyncio.new_event_loop()
-    # pyppeteer looks the loop up with asyncio.get_event_loop().
-    asyncio.set_event_loop(loop)
-    try:
-        _ensure_chromium()
-        return loop.run_until_complete(
-            asyncio.wait_for(_snapshot(url, capture, width, height, is_mobile), SNAPSHOT_TIMEOUT)
-        )
-    finally:
-        _close_loop(loop)
+    """Take the snapshot on a new event loop in the current (worker) thread.
+
+    asyncio.run() also cancels the tasks pyppeteer leaves running. Without
+    that, Python prints "Task was destroyed but it is pending!" after every
+    snapshot.
+    """
+    _ensure_chromium()
+    return asyncio.run(
+        asyncio.wait_for(_snapshot(url, capture, width, height, is_mobile), SNAPSHOT_TIMEOUT)
+    )
 
 
 def describe_error(url: str, error: BaseException) -> str:
