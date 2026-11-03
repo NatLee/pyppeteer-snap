@@ -39,6 +39,12 @@ apt-get install -y libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libxk
   libxcomposite1 libxdamage1 libxfixes3 libxrandr2 libgbm1 libasound2 libpango-1.0-0 libcairo2
 ```
 
+On Python 3.7, pip installs an older Pyppeteer (1.0.2) whose Chromium needs five more:
+
+```bash
+apt-get install -y libx11-xcb1 libxcursor1 libxtst6 libxss1 libgtk-3-0
+```
+
 If they are missing, the snapshot fails with `Browser closed unexpectedly` and a hint pointing here.
 
 ## Quick start
