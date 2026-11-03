@@ -1,6 +1,7 @@
-> **Looking for a maintained engine?** [playwright-snap](https://github.com/NatLee/playwright-snap) is the
-> Playwright-based successor to PyppeSnap, being built now. PyppeSnap keeps working, but it runs on
-> Pyppeteer, which is no longer maintained: see [Maintenance status](#maintenance-status).
+> **This repository is archived.** Use [playwright-snap](https://github.com/NatLee/playwright-snap) instead:
+> it is the Playwright-based successor, on PyPI as `playwright-snap` (`pip install playwright-snap`, then
+> `from playsnap import get_image_snapshot_by_url`). PyppeSnap still works, but it runs on Pyppeteer, which
+> is no longer maintained: see [Maintenance status](#maintenance-status).
 
 <p align="center">
   <picture>
